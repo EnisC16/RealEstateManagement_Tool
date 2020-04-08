@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="bathrooms" type="Decimal" />
+    <aura:attribute name="bedrooms" type="Decimal" />
+    <aura:attribute name="radius" type="Decimal" />
+    <aura:attribute name="city" type="String" />
+    <aura:attribute name="postalcode" type="String" />
+</aura:event>

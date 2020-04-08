@@ -1,0 +1,49 @@
+<aura:component >
+    <aura:attribute name="bathrooms" type="Decimal" default="5" />
+    <aura:attribute name="bedrooms" type="Decimal" default="10" />
+    <aura:attribute name="radius" type="Decimal" default="5" />
+    <aura:attribute name="city" type="String" />
+    <aura:attribute name="postalcode" type="String" />
+
+    <div>
+        <lightning:card class="filter-wrapper">
+            <aura:set attribute="title">
+                {!$Label.c.RealEstateFilter}
+            </aura:set>
+           
+            <lightning:layout multipleRows="true">
+                <!--
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputNumber label="{!$Label.c.MinPriceLabel}" updateOn="keyup"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputNumber label="{!$Label.c.MaxPriceLabel}" updateOn="keyup"/>
+                </lightning:layoutItem>
+                -->
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:slider label="{!$Label.c.BathroomsLabel}" value="{!v.bathrooms}" max="5" />
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:slider label="{!$Label.c.BedroomsLabel}" value="{!v.bedrooms}" max="10" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputNumber label="{!$Label.c.PostalCodeLabel}" value="{!v.postalcode}" updateOn="keyup"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputText label="{!$Label.c.CityLabel}" value="{!v.city}" updateOn="keyup"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="12">
+                    <lightning:slider label="{!$Label.c.RadiusLabel}" value="{!v.radius}" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="6">
+                    <lightning:button class="slds-size_full" variant="brand" label="Filter" onclick="{! c.filterBtn }" />
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6">
+                    <lightning:button class="slds-size_full" variant="neutral" label="Reset" onclick="{! c.resetBtn }" />
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+    </div>
+</aura:component>	
