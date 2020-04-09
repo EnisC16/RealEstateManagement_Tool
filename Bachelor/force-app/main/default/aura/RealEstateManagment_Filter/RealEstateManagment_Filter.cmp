@@ -5,6 +5,8 @@
     <aura:attribute name="city" type="String" />
     <aura:attribute name="postalcode" type="String" />
 
+    <aura:registerEvent name="filterEvent" type="c:RealEstate_FilterEvent" />
+
     <div>
         <lightning:card class="filter-wrapper">
             <aura:set attribute="title">

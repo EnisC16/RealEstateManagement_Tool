@@ -1,0 +1,11 @@
+<aura:component controller="RealEstateManagmentController" >
+    <aura:attribute name="properties" type="Map[]" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:RealEstate_FilterEvent" action="{!c.filterProperties}" />
+
+
+    <div class="map-wrapper">
+
+    </div>
+</aura:component>	
