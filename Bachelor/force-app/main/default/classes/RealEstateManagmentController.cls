@@ -1,6 +1,6 @@
 public with sharing class RealEstateManagmentController {
     @AuraEnabled
-    public static List<Real_Estate__c> getPropertyList(
+    public static List<Location> getPropertyList(
         Decimal bathrooms,
         Decimal bedrooms,
         Decimal radius,
@@ -9,73 +9,135 @@ public with sharing class RealEstateManagmentController {
         Decimal minPrice,
         Decimal maxPrice
     ){
-        String query = 'SELECT Id FROM Real_Estate__c';
+        String query = 'SELECT Id,Bathrooms__c,Bedrooms__c,Broker__r.Name,Buyer__r.LastName,'; 
+        query += 'Comission_for_Buyer__c,Construction_Date__c,Country__c,Living_Space__c,Buyer__r.FirstName,City__c,';
+        //query += 'Location_Description__c,Object_Condition__c,Object_Description__c,Equipment__c,'; ,Location__latitude__s,Location__longitude__s,
+        query += 'Rooms__c,Seller__r.LastName,Seller__r.FirstName,State__c,Street__c,Type__c,PostalCode__c,Price__c,Name';
+        query += ' FROM Real_Estate__c';
 
-        if(bathrooms != NULL || bedrooms != NULL || radius != NULL || 
-            city != NULL || postalcode != NULL || minPrice != NULL || maxPrice != NULL)
+        if(bathrooms != NULL || bedrooms != NULL || (radius != NULL && 
+            (city != NULL || postalcode != NULL)) || minPrice != NULL || maxPrice != NULL)
         {
             query += ' WHERE';
 
             if(bathrooms != null) {
-                query += ' Bathrooms__c <= :bathrooms';
+                query += ' Bathrooms__c >= :bathrooms';
+                if(bedrooms != null || minPrice != null || maxPrice != null || (city != NULL || postalcode != NULL) && radius != NULL) {
+                    query += ' AND';
+                }
             }
             if(bedrooms != null) {
-                query += ' Bedrooms__c <= :bedrooms';
+                query += ' Bedrooms__c >= :bedrooms';
+                if(minPrice != null || maxPrice != null || (city != NULL || postalcode != NULL) && radius != NULL) {
+                    query += ' AND';
+                }
             }
             if(minPrice != null) {
                 query += ' Price__c >= :minPrice';
+                if(maxPrice != null || (city != NULL || postalcode != NULL) && radius != NULL) {
+                    query += ' AND';
+                }
             }
             if(maxPrice != null) {
                 query += ' Price__c <= :maxPrice';
+                if((city != NULL || postalcode != NULL) && radius != NULL) {
+                    query += ' AND';
+                }
             }
-            if(city != NULL && postalcode != NULL && radius != NULL) {
-                String address = postalcode+' '+city;
-                address = EncodingUtil.urlEncode(address, 'UTF-8');
+            
+            if((city != NULL || postalcode != NULL) && radius != NULL) {
+                String address = ((postalcode != NULL ? postalcode+' ' : '') +(city != NULL ? city : ''));
+                address = EncodingUtil.urlEncode(address+' Germany', 'UTF-8');
+
+                String endpoint='https://eu1.locationiq.com/v1/search.php?key=5e6b269dc80685&q='+address+'&format=json';
 
                 Http h = new Http();
                 HttpRequest req = new HttpRequest();
-                req.setEndpoint('http://maps.googleapis.com/maps/api/geocode/json?address='+address+'&sensor=false');
+                req.setEndpoint(endpoint);
+                //req.setEndpoint('http://maps.googleapis.com/maps/api/geocode/json?address='+address+'&sensor=false');
                 req.setMethod('GET');
                 req.setTimeout(5000);
 
                 try{
                     HttpResponse res = h.send(req);
                     JSONParser parser = JSON.createParser(res.getBody());
+                    System.debug('res----->'+res.getBody());
 
-                    double lat = null;
-                    double lon = null;
+                    Double lat = null;
+                    Double lon = null;
 
                     while (parser.nextToken() != null) {
-
-                        if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'location')){
-
+                        if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'lat') && lat == null){
                             parser.nextToken();
-
-                            while (parser.nextToken() != JSONToken.END_OBJECT){
-
-                                String txt = parser.getText();
-                                parser.nextToken();
-
-                                if (txt == 'lat')
-                                    lat = parser.getDoubleValue();
-
-                                else if (txt == 'lng')
-                                    lon = parser.getDoubleValue();
-
-                            }
-
+                            lat = Double.valueOf(parser.getText());
                         }
-
+                        else if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'lon') && lon == null){
+                            parser.nextToken();
+                            lon = Double.valueOf(parser.getText());
+                        }
                     }
+                    System.debug('lat: '+lat+'#### lon: '+lon);
+                    query += ' DISTANCE(Location__c, GEOLOCATION('+String.valueOF(lat)+','+String.valueOf(lon)+'), \'km\') < '+String.valueOf(radius);
+
                  } catch (Exception e) {
                     system.debug(e);
                 }
-
-                query += ' DISTANCE(Location__c, GEOLOCATION(:lat,:lon), \'km\') < :radius';
             }
         }
 
         query += ' LIMIT 10000';
-        return Database.query(query);
+        System.debug('query:----->'+query.right(45));
+
+        List<Location> listLocs = new List<Location>();
+        for(Real_Estate__c obj : Database.query(query)){
+            System.debug('real estate: '+obj);
+            GeoLocation geoInfo = new GeoLocation();
+            geoInfo.Street = obj.Street__c;
+            geoInfo.PostalCode = obj.PostalCode__c;
+            geoInfo.City = obj.City__c;
+            geoInfo.State = obj.State__c;
+            geoInfo.Country = obj.Country__c;
+            Location locDetail = new Location();
+            locDetail.icon = 'action:new_account'; 
+            locDetail.id = obj.Id;
+            locDetail.title = obj.Name;
+            locDetail.description = (obj.Street__c != NULL ? (obj.Street__c+'<br/>') : '');
+            locDetail.description += (obj.PostalCode__c != NULL ? (obj.PostalCode__c+' ') : '');
+            locDetail.description += (obj.City__c != NULL ? (obj.City__c+'<br/>') : '');
+            locDetail.description += (obj.State__c != NULL ? (obj.State__c+'<br/>') : '');
+            locDetail.description += (obj.Country__c != NULL ? obj.Country__c : '');
+            locDetail.location = geoInfo;
+            
+            listLocs.add(locDetail);
+        }
+
+        return listLocs;
     }
+
+
+    public class Location{
+        @AuraEnabled 
+        public String id{get;set;} 
+        @AuraEnabled 
+        public String icon{get;set;} 
+        @AuraEnabled 
+        public String title{get;set;} 
+        @AuraEnabled
+        public String description{get;set;} 
+        @AuraEnabled 
+        public GeoLocation location{get;set;} 
+    }
+    public class GeoLocation{
+        @AuraEnabled 
+        public String Street{get;set;}
+        @AuraEnabled 
+        public String PostalCode{get;set;}
+        @AuraEnabled 
+        public String City{get;set;}
+        @AuraEnabled 
+        public String State{get;set;}
+        @AuraEnabled 
+        public String Country{get;set;}
+    }
+
 }

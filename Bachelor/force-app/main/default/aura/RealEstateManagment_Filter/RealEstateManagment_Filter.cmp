@@ -1,9 +1,11 @@
 <aura:component >
-    <aura:attribute name="bathrooms" type="Decimal" default="5" />
-    <aura:attribute name="bedrooms" type="Decimal" default="10" />
+    <aura:attribute name="bathrooms" type="Decimal" default="1" />
+    <aura:attribute name="bedrooms" type="Decimal" default="1" />
     <aura:attribute name="radius" type="Decimal" default="5" />
     <aura:attribute name="city" type="String" />
     <aura:attribute name="postalcode" type="String" />
+    <aura:attribute name="maxPrice" type="Decimal" />
+    <aura:attribute name="minPrice" type="Decimal" />
 
     <aura:registerEvent name="filterEvent" type="c:RealEstate_FilterEvent" />
 
@@ -27,6 +29,13 @@
                 </lightning:layoutItem>
                 <lightning:layoutItem padding="around-small" size="12">
                     <lightning:slider label="{!$Label.c.BedroomsLabel}" value="{!v.bedrooms}" max="10" />
+                </lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputNumber label="{!$Label.c.MinPriceLabel}" value="{!v.minPrice}" updateOn="keyup"/>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="6">
+                    <ui:inputText label="{!$Label.c.MaxPriceLabel}" value="{!v.maxPrice}" updateOn="keyup"/>
                 </lightning:layoutItem>
 
                 <lightning:layoutItem padding="around-small" size="6">

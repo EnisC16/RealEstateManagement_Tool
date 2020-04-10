@@ -16,13 +16,14 @@
                 <c:RealEstateManagment_Filter />
             </lightning:layoutItem>
 
-            <lightning:layoutItem padding="around-small" size="6">
-                <!--<c:RealEstateManagment_Map />-->
+            <lightning:layoutItem padding="around-small" size="9">
+                <c:RealEstateManagment_Map />
             </lightning:layoutItem>
-
+<!--
             <lightning:layoutItem padding="around-small" size="3">
-                <!--<c:RealEstateManagment_Info />-->
+                
             </lightning:layoutItem>
+-->
         </lightning:layout>
     </div>
 
