@@ -1,5 +1,5 @@
 ({
-    myAction : function(component, event, helper) {
+    selectRecordId : function(cmp, event, helper) {
 
     }
 })

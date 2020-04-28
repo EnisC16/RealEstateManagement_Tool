@@ -1,0 +1,46 @@
+<aura:component controller="RealEstateManagmentController">
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="property" type="Map" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="info-wrapper">
+        <lightning:card class="info-card">
+            <lightning:layout>
+                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="8">
+                    <div class="carousel">
+                        <aura:if isTrue="{!not(empty(v.property.listURL))}">
+                            <lightning:carousel disableAutoScroll="true" class="carousel-tag">
+                                <aura:iteration items="{!v.property.listURL}" var="obj" >
+                                    <lightning:carouselImage
+                                        src = '{!obj}'
+                                        header = "Pictures"
+                                        description = "pictures of the property."
+                                        alternativeText = "property pictures">
+                                    </lightning:carouselImage>
+                                </aura:iteration>
+                            </lightning:carousel>
+                            <aura:set attribute="else">
+                                NO PICTURES FOUND
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
+
+
+                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="4">
+                    {!v.property.property.Name}
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="4">
+                    {!v.property.property.Bathrooms__c}
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
+
+            </lightning:layout>
+        </lightning:card>
+    </div>
+</aura:component>	
+<!--implements="force:appHostable,force:hasRecordId,flexipage:availableForAllPageTypes"-->

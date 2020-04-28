@@ -99,13 +99,14 @@ public with sharing class RealEstateManagmentController {
             geoInfo.Country = obj.Country__c;
             Location locDetail = new Location();
             locDetail.icon = 'action:new_account'; 
-            locDetail.id = obj.Id;
+            locDetail.value = obj.Id;
             locDetail.title = obj.Name;
             locDetail.description = (obj.Street__c != NULL ? (obj.Street__c+'<br/>') : '');
             locDetail.description += (obj.PostalCode__c != NULL ? (obj.PostalCode__c+' ') : '');
             locDetail.description += (obj.City__c != NULL ? (obj.City__c+'<br/>') : '');
             locDetail.description += (obj.State__c != NULL ? (obj.State__c+'<br/>') : '');
-            locDetail.description += (obj.Country__c != NULL ? obj.Country__c : '');
+            locDetail.description += (obj.Country__c != NULL ? obj.Country__c : '<br/>');
+            //locDetail.description += '<button type="button" onclick="{!c.openProperties}">Open</button>';
             locDetail.location = geoInfo;
             
             listLocs.add(locDetail);
@@ -117,7 +118,7 @@ public with sharing class RealEstateManagmentController {
 
     public class Location{
         @AuraEnabled 
-        public String id{get;set;} 
+        public String value{get;set;} 
         @AuraEnabled 
         public String icon{get;set;} 
         @AuraEnabled 
@@ -138,6 +139,46 @@ public with sharing class RealEstateManagmentController {
         public String State{get;set;}
         @AuraEnabled 
         public String Country{get;set;}
+    }
+
+
+    @AuraEnabled
+    public static PropertyWrapper getPropertyDetails(String recordId){
+        List<ContentDocumentLink> documentFiles = [
+                SELECT Id, ContentDocumentId, LinkedEntityId, ContentDocument.Title, ContentDocument.CreatedDate
+                FROM ContentDocumentLink
+                WHERE LinkedEntityId  = :recordId //AND (ContentDocument.Title LIKE '%.png' OR ContentDocument.Title LIKE '%.jpg' )
+                ORDER BY ContentDocument.CreatedDate ASC];
+
+        PropertyWrapper wrapper = new PropertyWrapper(recordId);
+
+        for(ContentDocumentLink link : documentFiles) {
+            System.debug('link ----> '+link);
+            System.debug('ContentDocument.Title ----> '+link.ContentDocument.Title);
+            wrapper.listURL.add('/sfc/servlet.shepherd/document/download/'+link.ContentDocumentId);
+            // /sfc/servlet.shepherd/version/download/
+            // /sfc/servlet.shepherd/document/download/
+            // /servlet/servlet.FileDownload?file=
+        }
+
+        return wrapper;
+    }
+
+    public class PropertyWrapper {
+        @AuraEnabled
+        public List<String> listURL;
+        @AuraEnabled
+        public Real_Estate__c property;
+
+        public PropertyWrapper(String recordId){
+            this.property = [SELECT Rooms__c,Seller__r.LastName,Seller__r.FirstName,State__c,Street__c,Type__c,PostalCode__c,Price__c,Name,
+                                Bathrooms__c,Bedrooms__c,Broker__r.Name,Buyer__r.LastName,
+                                Comission_for_Buyer__c,Construction_Date__c,Country__c,Living_Space__c,Buyer__r.FirstName,City__c,
+                                Location_Description__c,Object_Condition__c,Object_Description__c,Equipment__c,Location__latitude__s,Location__longitude__s
+                             FROM Real_Estate__c
+                             WHERE Id = :recordId];
+            this.listURL = new List<String>();
+        }
     }
 
 }

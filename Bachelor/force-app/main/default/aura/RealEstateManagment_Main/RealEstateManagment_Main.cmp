@@ -1,11 +1,7 @@
 <aura:component access="global" implements="force:appHostable" >
-<!--
-    <lightning:tile label="{!$Label.c.RealEstateTitle}" >
-        <aura:set attribute="media">
-            <lightning:icon iconName="standard:location"/>
-        </aura:set>
-    </lightning:tile>
--->
+    <aura:attribute name="recordId" type="String" />
+
+
     <div>
         <c:RealEstateManagment_Header />
     </div>
@@ -17,14 +13,13 @@
             </lightning:layoutItem>
 
             <lightning:layoutItem padding="around-small" size="9">
-                <c:RealEstateManagment_Map />
+                <c:RealEstateManagment_Map recordId="{!v.recordId}"/>
             </lightning:layoutItem>
-<!--
-            <lightning:layoutItem padding="around-small" size="3">
-                
-            </lightning:layoutItem>
--->
         </lightning:layout>
+        
+        <aura:if isTrue="{!not(empty(v.recordId))}">
+            <c:RealEstateManagment_Detail recordId="{!v.recordId}"/>
+        </aura:if>
     </div>
 
 </aura:component>	
