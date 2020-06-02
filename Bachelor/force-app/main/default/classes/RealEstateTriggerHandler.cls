@@ -15,7 +15,9 @@ public class RealEstateTriggerHandler implements ITriggerHandler {
  
     public void BeforeInsert(List<SObject> newItems) {
         /* update geolocation fields */
-
+        if(newItems.size() == 1) {
+            updateGeolocationField((Real_Estate__c) newItems[0]);
+        }
     }
  
     public void BeforeUpdate(Map<Id, SObject> newItems, Map<Id, SObject> oldItems) {}
@@ -29,4 +31,10 @@ public class RealEstateTriggerHandler implements ITriggerHandler {
     public void AfterDelete(Map<Id, SObject> oldItems) {}
  
     public void AfterUndelete(Map<Id, SObject> oldItems) {}
+
+    private void updateGeolocationField(Real_Estate__c property) {
+        if(property.Location__latitude__s == NULL || property.Location__longitude__s == NULL) {
+            property.Location__latitude__s = 0;
+        }
+    }
 }
