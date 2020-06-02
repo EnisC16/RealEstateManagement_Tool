@@ -54,7 +54,6 @@ public with sharing class RealEstateManagmentController {
                 Http h = new Http();
                 HttpRequest req = new HttpRequest();
                 req.setEndpoint(endpoint);
-                //req.setEndpoint('http://maps.googleapis.com/maps/api/geocode/json?address='+address+'&sensor=false');
                 req.setMethod('GET');
                 req.setTimeout(5000);
 

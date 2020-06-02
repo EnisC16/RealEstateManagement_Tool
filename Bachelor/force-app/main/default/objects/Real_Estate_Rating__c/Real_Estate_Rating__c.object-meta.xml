@@ -152,14 +152,14 @@
     <enableSearch>true</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <label>Rating</label>
+    <label>Real Estate Rating</label>
     <nameField>
         <displayFormat>R-{00000000}</displayFormat>
-        <label>Rating Name</label>
+        <label>Number</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Ratings</pluralLabel>
+    <pluralLabel>Real Estate Ratings</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>
