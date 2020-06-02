@@ -34,7 +34,19 @@ public class RealEstateTriggerHandler implements ITriggerHandler {
 
     private void updateGeolocationField(Real_Estate__c property) {
         if(property.Location__latitude__s == NULL || property.Location__longitude__s == NULL) {
-            property.Location__latitude__s = 0;
+            GeolocationService geoService = new GeolocationService();
+            geoService.calculateGeolocationByAddress(property.Street__c,
+                                                    property.City__c,
+                                                    property.Country__c,
+                                                    property.State__c,
+                                                    property.Country__c,
+                                                    property.PostalCode__c);
+
+            if(geoService.result == 'SUCCESS') {
+                property.Location__latitude__s = geoService.latitude;
+                property.Location__longitude__s = geoService.longitude;
+            }
+            
         }
     }
 }

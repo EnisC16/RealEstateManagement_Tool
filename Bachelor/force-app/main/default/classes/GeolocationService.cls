@@ -5,9 +5,17 @@ public class GeolocationService {
     public String message;
     public String result;
 
-    public void calculateGeolocationByAddress(String postalcode, String city) {
+    public void calculateGeolocationByAddress(
+        String street,
+        String city,
+        String county,
+        String state,
+        String country,
+        String postalcode
+    ) {
 
-        String address = ((postalcode != NULL ? postalcode+' ' : '') +(city != NULL ? city : ''));
+        String address = ((street != NULL ? street+' ' : '') + (city != NULL ? city+' ' : '') + (county != NULL ? county+' ' : '') + (state != NULL ? state+' ' : '') + (country != NULL ? country+' ' : '') + (postalcode != NULL ? postalcode+' ' : ''));
+        System.debug('address: '+address);
         address = EncodingUtil.urlEncode(address+' Germany', 'UTF-8');
 
         String endpoint='https://eu1.locationiq.com/v1/search.php?key=5e6b269dc80685&q='+address+'&format=json';

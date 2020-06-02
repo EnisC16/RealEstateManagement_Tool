@@ -1,4 +1,8 @@
 public with sharing class RealEstateManagmentController {
+
+    public class MyException extends Exception {}
+
+
     @AuraEnabled
     public static List<Location> getPropertyList(
         Decimal bathrooms,
@@ -46,50 +50,29 @@ public with sharing class RealEstateManagmentController {
             }
             
             if((city != NULL || postalcode != NULL) && radius != NULL) {
-                String address = ((postalcode != NULL ? postalcode+' ' : '') +(city != NULL ? city : ''));
-                address = EncodingUtil.urlEncode(address+' Germany', 'UTF-8');
 
-                String endpoint='https://eu1.locationiq.com/v1/search.php?key=5e6b269dc80685&q='+address+'&format=json';
-
-                Http h = new Http();
-                HttpRequest req = new HttpRequest();
-                req.setEndpoint(endpoint);
-                req.setMethod('GET');
-                req.setTimeout(5000);
+                GeolocationService geoService = new GeolocationService();
+                geoService.calculateGeolocationByAddress('', city, '', '', '',postalcode);
 
                 try{
-                    HttpResponse res = h.send(req);
-                    JSONParser parser = JSON.createParser(res.getBody());
-                    System.debug('res----->'+res.getBody());
-
-                    Double lat = null;
-                    Double lon = null;
-
-                    while (parser.nextToken() != null) {
-                        if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'lat') && lat == null){
-                            parser.nextToken();
-                            lat = Double.valueOf(parser.getText());
-                        }
-                        else if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) && (parser.getText() == 'lon') && lon == null){
-                            parser.nextToken();
-                            lon = Double.valueOf(parser.getText());
-                        }
+                    if(geoService.result == 'SUCCESS') {
+                        query += ' DISTANCE(Location__c, GEOLOCATION('+String.valueOF(geoService.latitude)+','+String.valueOf(geoService.longitude)+'), \'km\') < '+String.valueOf(radius);
                     }
-                    System.debug('lat: '+lat+'#### lon: '+lon);
-                    query += ' DISTANCE(Location__c, GEOLOCATION('+String.valueOF(lat)+','+String.valueOf(lon)+'), \'km\') < '+String.valueOf(radius);
+                    else {
+                        throw new MyException(geoService.message);
+                    }
 
                  } catch (Exception e) {
-                    system.debug(e);
+                    system.debug(e.getMessage());
                 }
             }
         }
 
         query += ' LIMIT 10000';
-        System.debug('query:----->'+query.right(45));
+        List<Real_Estate__c> listRealEstate = Database.query(query);
 
         List<Location> listLocs = new List<Location>();
-        for(Real_Estate__c obj : Database.query(query)){
-            System.debug('real estate: '+obj);
+        for(Real_Estate__c obj : listRealEstate){
             GeoLocation geoInfo = new GeoLocation();
             geoInfo.Street = obj.Street__c;
             geoInfo.PostalCode = obj.PostalCode__c;
@@ -105,7 +88,6 @@ public with sharing class RealEstateManagmentController {
             locDetail.description += (obj.City__c != NULL ? (obj.City__c+'<br/>') : '');
             locDetail.description += (obj.State__c != NULL ? (obj.State__c+'<br/>') : '');
             locDetail.description += (obj.Country__c != NULL ? obj.Country__c : '<br/>');
-            //locDetail.description += '<button type="button" onclick="{!c.openProperties}">Open</button>';
             locDetail.location = geoInfo;
             
             listLocs.add(locDetail);
@@ -146,18 +128,13 @@ public with sharing class RealEstateManagmentController {
         List<ContentDocumentLink> documentFiles = [
                 SELECT Id, ContentDocumentId, LinkedEntityId, ContentDocument.Title, ContentDocument.CreatedDate
                 FROM ContentDocumentLink
-                WHERE LinkedEntityId  = :recordId //AND (ContentDocument.Title LIKE '%.png' OR ContentDocument.Title LIKE '%.jpg' )
+                WHERE LinkedEntityId  = :recordId
                 ORDER BY ContentDocument.CreatedDate ASC];
 
         PropertyWrapper wrapper = new PropertyWrapper(recordId);
 
         for(ContentDocumentLink link : documentFiles) {
-            System.debug('link ----> '+link);
-            System.debug('ContentDocument.Title ----> '+link.ContentDocument.Title);
             wrapper.listURL.add('/sfc/servlet.shepherd/document/download/'+link.ContentDocumentId);
-            // /sfc/servlet.shepherd/version/download/
-            // /sfc/servlet.shepherd/document/download/
-            // /servlet/servlet.FileDownload?file=
         }
 
         return wrapper;
