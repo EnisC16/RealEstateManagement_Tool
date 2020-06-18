@@ -31,9 +31,9 @@
                 <label>Reihenhaus</label>
             </value>
             <value>
-                <fullName>Wohnung</fullName>
+                <fullName>Eigentumswohnung</fullName>
                 <default>false</default>
-                <label>Wohnung</label>
+                <label>Eigentumswohnung</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -52,7 +52,7 @@ public with sharing class RealEstateManagmentController {
             if((city != NULL || postalcode != NULL) && radius != NULL) {
 
                 GeolocationService geoService = new GeolocationService();
-                geoService.calculateGeolocationByAddress('', city, '', '', '',postalcode);
+                geoService.calculateGeolocationByAddress('', city, '', '',postalcode);
 
                 try{
                     if(geoService.result == 'SUCCESS') {
@@ -132,15 +132,18 @@ public with sharing class RealEstateManagmentController {
                 ORDER BY ContentDocument.CreatedDate ASC];
 
         PropertyWrapper wrapper = new PropertyWrapper(recordId);
-
+        wrapper.files = documentFiles;
+/*
         for(ContentDocumentLink link : documentFiles) {
             wrapper.listURL.add('/sfc/servlet.shepherd/document/download/'+link.ContentDocumentId);
         }
-
+*/
         return wrapper;
     }
 
     public class PropertyWrapper {
+        @AuraEnabled
+        public List<ContentDocumentLink> files;
         @AuraEnabled
         public List<String> listURL;
         @AuraEnabled
@@ -154,6 +157,7 @@ public with sharing class RealEstateManagmentController {
                              FROM Real_Estate__c
                              WHERE Id = :recordId];
             this.listURL = new List<String>();
+            this.files = new List<ContentDocumentLink>();
         }
     }
 

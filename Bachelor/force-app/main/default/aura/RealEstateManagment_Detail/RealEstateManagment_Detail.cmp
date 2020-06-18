@@ -10,14 +10,14 @@
                 <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
                 <lightning:layoutItem padding="around-small" size="8">
                     <div class="carousel">
-                        <aura:if isTrue="{!not(empty(v.property.listURL))}">
+                        <aura:if isTrue="{!not(empty(v.property.files))}">
                             <lightning:carousel disableAutoScroll="true" class="carousel-tag">
-                                <aura:iteration items="{!v.property.listURL}" var="obj" >
+                                <aura:iteration items="{!v.property.files}" var="obj" >
+                                    
                                     <lightning:carouselImage
-                                        src = '{!obj}'
-                                        header = "Pictures"
-                                        description = "pictures of the property."
-                                        alternativeText = "property pictures">
+                                        src = "{!'/sfc/servlet.shepherd/document/download/'+obj.ContentDocumentId}"
+                                        header = "{!obj.ContentDocument.Title}"
+                                        alternativeText = "{!obj.ContentDocument.Title}">
                                     </lightning:carouselImage>
                                 </aura:iteration>
                             </lightning:carousel>
@@ -29,15 +29,154 @@
                 </lightning:layoutItem>
                 <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
 
+                <br/><br/>
 
-                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
-                <lightning:layoutItem padding="around-small" size="4">
-                    {!v.property.property.Name}
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        <a onclick="{!c.showDetailPage}">{!v.property.property.Name}</a>
+                    </div>
                 </lightning:layoutItem>
-                <lightning:layoutItem padding="around-small" size="4">
-                    {!v.property.property.Bathrooms__c}
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Badezimmer
+                    </div>
                 </lightning:layoutItem>
-                <lightning:layoutItem padding="around-small" size="2"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Bathrooms__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Schlafzimmer
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Bedrooms__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Zimmer
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Rooms__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Wohnfläche
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Living_Space__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Objektzustand
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Object_Condition__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Typ
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Type__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        <aura:if isTrue="{!v.property.property.Rent_only__c}">
+                            Mietpreis
+                            <aura:set attribute="else">
+                                Kaufpreis
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Price__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Adresse
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Street__c} <br/>
+                        {!v.property.property.PostalCode__c} &nbsp; {!v.property.property.City__c} <br/>
+                        {!v.property.property.State__c} <br/>
+                        {!v.property.property.Country__c} <br/>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Objektbeschreibung
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Object_Description__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        Lage
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3">
+                    <div style="text-align: center;">
+                        {!v.property.property.Equipment__c}
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small" size="3"></lightning:layoutItem>
 
             </lightning:layout>
         </lightning:card>

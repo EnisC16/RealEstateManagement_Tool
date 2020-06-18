@@ -1,3 +1,3 @@
-Trigger RealEstateTrigger on Real_Estate__c (before insert) {
+Trigger RealEstateTrigger on Real_Estate__c (after insert) {
     TriggerDispatcher.Run(new RealEstateTriggerHandler());
 }

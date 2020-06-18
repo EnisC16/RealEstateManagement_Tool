@@ -8,13 +8,12 @@ public class GeolocationService {
     public void calculateGeolocationByAddress(
         String street,
         String city,
-        String county,
         String state,
         String country,
         String postalcode
     ) {
 
-        String address = ((street != NULL ? street+' ' : '') + (city != NULL ? city+' ' : '') + (county != NULL ? county+' ' : '') + (state != NULL ? state+' ' : '') + (country != NULL ? country+' ' : '') + (postalcode != NULL ? postalcode+' ' : ''));
+        String address = ((street != NULL ? street+' ' : '') + (city != NULL ? city+' ' : '') + (postalcode != NULL ? postalcode+' ' : '') +  (state != NULL ? state+' ' : '') + (country != NULL ? country+' ' : ''));
         System.debug('address: '+address);
         address = EncodingUtil.urlEncode(address+' Germany', 'UTF-8');
 
