@@ -18,7 +18,6 @@
                 var properties = response.getReturnValue();
                 cmp.set('v.properties', properties);
                 cmp.set('v.zoomLevel', 14);
-                //cmp.set('v.markersTitle', '');
             }
             else if (state === "INCOMPLETE") {
                 console.log('incomplete');
@@ -37,6 +36,5 @@
         });
 
         $A.enqueueAction(action);
- 
     }
 })
