@@ -133,11 +133,7 @@ public with sharing class RealEstateManagmentController {
 
         PropertyWrapper wrapper = new PropertyWrapper(recordId);
         wrapper.files = documentFiles;
-/*
-        for(ContentDocumentLink link : documentFiles) {
-            wrapper.listURL.add('/sfc/servlet.shepherd/document/download/'+link.ContentDocumentId);
-        }
-*/
+
         return wrapper;
     }
 
@@ -145,15 +141,18 @@ public with sharing class RealEstateManagmentController {
         @AuraEnabled
         public List<ContentDocumentLink> files;
         @AuraEnabled
-        public List<String> listURL;
-        @AuraEnabled
         public Real_Estate__c property;
 
         public PropertyWrapper(String recordId){
-            this.property = [SELECT Rooms__c,Seller__r.LastName,Seller__r.FirstName,State__c,Street__c,Type__c,PostalCode__c,Price__c,Name,
-                                Bathrooms__c,Bedrooms__c,Broker__r.Name,Buyer__r.LastName,
-                                Comission_for_Buyer__c,Construction_Date__c,Country__c,Living_Space__c,Buyer__r.FirstName,City__c,
-                                Location_Description__c,Object_Condition__c,Object_Description__c,Equipment__c,Location__latitude__s,Location__longitude__s
+            this.property = [SELECT Rooms__c,Seller__r.LastName,
+                    Seller__r.FirstName,State__c,Street__c,Type__c,
+                    PostalCode__c,Price__c,Name,Bathrooms__c,
+                    Bedrooms__c,Broker__r.Name,Buyer__r.LastName,
+                    Comission_for_Buyer__c,Construction_Date__c,
+                    Country__c,Living_Space__c,Buyer__r.FirstName,
+                    City__c,Location_Description__c,Object_Condition__c,
+                    Object_Description__c,Equipment__c,
+                    Location__latitude__s,Location__longitude__s
                              FROM Real_Estate__c
                              WHERE Id = :recordId];
             this.listURL = new List<String>();
