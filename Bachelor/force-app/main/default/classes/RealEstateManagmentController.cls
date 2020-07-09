@@ -155,8 +155,13 @@ public with sharing class RealEstateManagmentController {
                     Location__latitude__s,Location__longitude__s
                              FROM Real_Estate__c
                              WHERE Id = :recordId];
-            this.listURL = new List<String>();
-            this.files = new List<ContentDocumentLink>();
+
+            this.files = new List<ContentDocumentLink>(
+                [SELECT Id, ContentDocumentId, LinkedEntityId, ContentDocument.Title, ContentDocument.CreatedDate
+                FROM ContentDocumentLink
+                WHERE LinkedEntityId  = :recordId
+                ORDER BY ContentDocument.CreatedDate ASC]
+            );
         }
     }
 

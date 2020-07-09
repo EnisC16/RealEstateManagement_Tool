@@ -17,7 +17,8 @@ public class GeolocationService {
         System.debug('address: '+address);
         address = EncodingUtil.urlEncode(address+' Germany', 'UTF-8');
 
-        String endpoint='https://eu1.locationiq.com/v1/search.php?key=5e6b269dc80685&q='+address+'&format=json';
+        GeolocationService__c service = GeolocationService__c.getOrgDefaults();
+        String endpoint='https://eu1.locationiq.com/v1/search.php?key='+service.AccessToken__c+'&q='+address+'&format=json';
 
         Http h = new Http();
         HttpRequest req = new HttpRequest();
